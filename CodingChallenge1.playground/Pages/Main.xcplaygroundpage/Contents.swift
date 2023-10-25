@@ -53,8 +53,9 @@ class Bank:BankingSystem {
     var customerAccounts = [CustomerAccount]()
     var interestRate: Double = 5
     
-    init(customerAccount: [CustomerAccount] = [CustomerAccount]()) {
-        self.customerAccounts = customerAccount
+    init(customerAccounts: [CustomerAccount] = [CustomerAccount](), interestRate: Double) {
+        self.customerAccounts = customerAccounts
+        self.interestRate = interestRate
     }
     
     // Add a customer to the system
