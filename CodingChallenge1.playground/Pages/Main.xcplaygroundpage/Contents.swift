@@ -159,17 +159,26 @@ class CustomerAccount{
     
     // Deposit and Withdraw: Allow customers to deposit and withdraw money from their accounts.
     // Make sure to handle overdraft for checking accounts and minimum balance for savings account.
-    func transaction(amount: Double, transactionType: transactionType){
+    func transaction(amount: Double, transactionType: transactionType, accountType: accountType){
         print("\(getFullName())'s Balance Before transaction -> \(balance.doubleToString2Decimal())")
         if transactionType == .Deposit {
             print("Amount deposited successfully")
             self.balance += amount
         }else {
-            if balance > amount{
-                self.balance -= amount
-                print("Amount Withdrew successfully")
-            } else{
-                print("Insufficient balance amount left on your account")
+            if accountType == .Checking || accountType == .Business {
+                if balance-amount > 0{
+                    self.balance -= amount
+                    print("Amount Withdrew successfully")
+                } else{
+                    print("Insufficient balance amount left on your account")
+                }
+            }else if accountType == .Savings {
+                if balance-amount > 1000{
+                    self.balance -= amount
+                    print("Amount Withdrew successfully")
+                } else{
+                    print("Insufficient balance amount left on your account")
+                }
             }
         }
         print("\(getFullName())'s Balance After transaction -> \(balance.doubleToString2Decimal())")
@@ -177,8 +186,9 @@ class CustomerAccount{
     }
 }
 
+// ---------------------------------------------------------------------------------------------------------
+// MARK: OUTPUT
 // Creating Customer 1
-
 let customer1Savings = CustomerAccount(firstName: "Rahul", middleName: "R", lastName: "Adepu",
                                        accountNumber: "S000001",
                                        balance: 1000,
@@ -214,31 +224,35 @@ bankingSystem.addCustomerToSystem(customerAccount: customer2Checking)
 //// Check if all the accounts a created with all the detail
 //bankingSystem.listOfAllAcc()
 
+// Deposit and withdraw
 print("**************************************************")
 print("DEPOSIT AND WITHDRAW")
-// Deposit and withdraw
-customer1Checking.transaction(amount: 100, transactionType: .Deposit)
-customer1Checking.transaction(amount: 100, transactionType: .Withdraw)
+print("**************************************************")
+customer1Checking.transaction(amount: 150, transactionType: .Deposit, accountType: .Checking)
+customer1Checking.transaction(amount: 100, transactionType: .Withdraw, accountType: .Checking)
 
 // Withdraw limit (check for overdraft for checking accounts)
-customer1Checking.transaction(amount: 500, transactionType: .Withdraw)
+customer1Checking.transaction(amount: 500, transactionType: .Withdraw, accountType: .Checking)
 
 // Withdraw limit (check for minimum balance for savings account)
-customer1Checking.transaction(amount: 100, transactionType: .Withdraw)
+customer1Savings.transaction(amount: 100, transactionType: .Withdraw, accountType: .Savings)
 
-print("**************************************************")
 // Calculate interest on balance for a savings account
+print("**************************************************")
 print("INTEREST ON BALANCE OF SAVINGS ACCOUNT")
+print("**************************************************")
 customer1Savings.interestCalculatorSavingsAcc(interestRate: bankingSystem.interestRate)
 
-print("**************************************************")
 // List all accounts
+print("**************************************************")
 print("LIST OF ALL ACCOUNTS")
+print("**************************************************")
 bankingSystem.listOfAllAcc()
 
-print("**************************************************")
 // Transfer Funds
+print("**************************************************")
 print("TRANSFER FUNDS")
+print("**************************************************")
 bankingSystem.transferFunds(from: customer2Checking, to: customer1Checking, amount: 100)
 
 // transfer limit (check for overdraft for checking accounts)
@@ -250,8 +264,8 @@ bankingSystem.transferFunds(from: customer1Business, to: customer2Checking, amou
 // transfer limit (check for minimum balance for savings account)
 bankingSystem.transferFunds(from: customer1Savings, to: customer2Checking, amount: 100)
 
-print("**************************************************")
 // Calculate Total Bank Balance
+print("**************************************************")
 print("The total balance amount in the bank is $",bankingSystem.totalBankBalance().doubleToString2Decimal())
 
 // Extension
